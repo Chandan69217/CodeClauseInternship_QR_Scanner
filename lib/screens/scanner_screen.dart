@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:qr_scanner/screens/history_screen.dart';
 import 'package:qr_scanner/screens/setting_screen.dart';
-import 'package:qr_scanner/widgets.dart';
 import 'package:sizing/sizing.dart';
 
 class ScannerScreen extends StatefulWidget {
@@ -152,9 +151,16 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
 
   void showDialogBox(BuildContext context,Barcode result) async{
     await controller?.pauseCamera();
-    showDialog(context: context, builder: (buildContext){
-      return AlertDialog(
-        title: Text(result.format.name),
+    
+    showGeneralDialog(context: context, pageBuilder: (buildContext,animation,secondaryAnimation){
+      return PopScope( canPop: false, child: AlertDialog(
+        title: Row(
+          children: [
+            SvgPicture.asset('assets/icons/qr_scanner_icon.svg',width: 25.ss,height: 25.ss,),
+            SizedBox(width: 5.ss,),
+            Text(result.format.name),
+          ],
+        ),
         content: Text(result.code.toString()),
         actions: [
           TextButton(onPressed: ()async{
@@ -162,11 +168,9 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
             Navigator.pop(buildContext);
           }, child: Text('OK')),
         ],
+      )
       );
-    },
-      useSafeArea: true,
-      useRootNavigator: true
-    );
+    });
   }
 
 }
