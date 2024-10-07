@@ -3,14 +3,15 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
-import 'package:qr_scanner/screens/history_screen.dart';
-import 'package:qr_scanner/screens/setting_screen.dart';
+import 'package:qr_scanner/qr_code_database.dart';
+import 'package:qr_scanner/utilities/consts.dart';
 import 'package:sizing/sizing.dart';
+
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
-
   @override
   State<ScannerScreen> createState() => _HomeDashboardScreenState();
 }
@@ -20,7 +21,14 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   double zoom = 0;
+  QrCodeDatabase? _databaseRef;
 
+
+  @override
+  void initState()  {
+    super.initState();
+    _databaseRef = QrCodeDatabase.instance;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,13 +93,12 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
 
 
   Widget _buildQrView(BuildContext context) {
-    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
         MediaQuery.of(context).size.height < 400)
         ? 200.0
         : 300.0;
-    // To ensure the Scanner view is properly sizes after rotation
-    // we need to listen for Flutter SizeChanged notification and update controller
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -128,6 +135,13 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        Map<String,dynamic> data;
+        data ={
+          Consts.SCAN_TYPE : result!.format.name,
+          Consts.SCAN_DATA : result!.code,
+          Consts.DATE_TIME : DateFormat('dd-mmm-yyyy  HH:mm').format(DateTime.now())
+        };
+        _databaseRef!.insertData(data);
         showDialogBox(context, result!);
       });
     });
@@ -146,6 +160,7 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
   @override
   void dispose() {
     controller?.dispose();
+    _databaseRef!.closeDatabase();
     super.dispose();
   }
 
@@ -172,5 +187,6 @@ class _HomeDashboardScreenState extends State<ScannerScreen> {
       );
     });
   }
+
 
 }
