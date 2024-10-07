@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
-import 'package:qr_scanner/qr_code_database.dart';
+import 'package:qr_scanner/database_helper/qr_code_database.dart';
 import 'package:qr_scanner/utilities/consts.dart';
 import 'package:sizing/sizing.dart';
 

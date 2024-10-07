@@ -13,6 +13,8 @@ class SettingScreen extends StatefulWidget {
 class _SettignScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.purple,);
+    return Scaffold(
+      body: Center(child: const Text('Sorry...work in progress, will be added shortly'),),
+    );
   }
 }

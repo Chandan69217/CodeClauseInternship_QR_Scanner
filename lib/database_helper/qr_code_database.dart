@@ -1,7 +1,5 @@
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_scanner/utilities/consts.dart';
@@ -42,7 +40,30 @@ class QrCodeDatabase{
     return data;
   }
 
-  void closeDatabase(){
+  Future<bool> deleteAll() async {
+    int rowEffectedCount;
+    Database db = await getDatabase();
+    rowEffectedCount = await db.delete(Consts.TABLE_NAME);
+
+    if(rowEffectedCount>0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  Future<bool> delete(int serialNo) async {
+    int rowEffectedCount;
+    Database db = await getDatabase();
+    rowEffectedCount = await db.delete(Consts.TABLE_NAME,where: '${Consts.SERIAL_NO} = $serialNo');
+    if(rowEffectedCount>0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  Future<void> closeDatabase() async{
     getDatabase().then((db){
       db.close();
     });
